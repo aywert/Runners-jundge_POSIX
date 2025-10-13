@@ -125,7 +125,7 @@ int runner(int runner_n, mqd_t* queue_array, int N) {
           // Передать эстафету следующему бегуну
           printf("Runner %d: giving estapheta to the next runner\n", runner_n);
           snprintf(message, sizeof(message), "%d", runner_n + 1);
-          mq_send(queue_array[0], message, strlen(message)+1, 1);
+          mq_send(queue_array[0], message, strlen(message)+1, 2);
       } else {
           // Последний бегун - финиш
           printf("Runner %d: finished!\n", runner_n);
@@ -133,7 +133,9 @@ int runner(int runner_n, mqd_t* queue_array, int N) {
       run = false;
     }
     else {
-      //printf("Runner %d: Got message %s Buffer %s\n", runner_n, message, buffer);
+      //printf("Runner %d: Got message %s Buffer %s\n", runner_n, message, buffer);,
+      snprintf(message, sizeof(message),"%s", buffer);
+      printf("message = %s\n", message);
       if (mq_send(queue_array[0], message, strlen(message)+1, 1)==-1)
         perror("send issue");
       //sleep(1);

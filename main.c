@@ -2,7 +2,7 @@
 #include <sys/types.h>
 
 
-static size_t N = 10;
+static size_t N = 126;
 const char* name = "/test_queue";
 
 int main(void) {
