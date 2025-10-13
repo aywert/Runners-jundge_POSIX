@@ -14,12 +14,12 @@ int main(void) {
     .mq_curmsgs = 0
   };
 
-  mqd_t* queue_array = queues_for_runners(N, O_CREAT|O_RDWR, &attr); 
+  mqd_t* queue_array = queues_for_runners(O_CREAT|O_RDWR, &attr); 
   //| comunication with judge| comunication with runners |ready status|
   
   init_runners(queue_array, N);
   judge(queue_array, N);
-  queues_for_runners_delete(N, queue_array);
+  queues_for_runners_delete(queue_array);
   //init_runners(queue_id, N);  //starts N processes
   //judge(queue_id, N);         //gives start to the first runner
   //msgctl(queue_id, IPC_RMID, &My_st);

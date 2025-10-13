@@ -26,8 +26,8 @@ int  runner(int runner_n, mqd_t* queue_array, int N);
 int  judge(mqd_t* queue_array, int N);
 void init_runners(mqd_t* queue_array, int N);
 
-void   queues_for_runners_delete(size_t N, mqd_t* queue_array);
-mqd_t* queues_for_runners(size_t N, int msgflg, struct mq_attr* mq_attr);
+void   queues_for_runners_delete(mqd_t* queue_array);
+mqd_t* queues_for_runners(int msgflg, struct mq_attr* mq_attr);
 void   destruct_queue(const char* queue_name, mqd_t queue_id); 
 mqd_t  create_queue(const char *name, int msgflg, struct mq_attr* mq_attr);
 

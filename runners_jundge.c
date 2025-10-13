@@ -12,7 +12,7 @@ mqd_t create_queue(const char *name, int msgflg, struct mq_attr* mq_attr) {
   return queue_id; 
 }
 
-mqd_t* queues_for_runners(size_t N, int msgflg, struct mq_attr* mq_attr) {
+mqd_t* queues_for_runners(int msgflg, struct mq_attr* mq_attr) {
   const char* name[3] = {"/judge", "/runners", "/ready_queue"};
   mqd_t* queue_array = (mqd_t*)calloc(sizeof(mqd_t), 3);
   
@@ -25,7 +25,7 @@ mqd_t* queues_for_runners(size_t N, int msgflg, struct mq_attr* mq_attr) {
   return queue_array; 
 }
 
-void queues_for_runners_delete(size_t N, mqd_t* queue_array) {
+void queues_for_runners_delete(mqd_t* queue_array) {
   const char* name[3] = {"/judge", "/runners", "/ready_queue"};
   for (size_t i = 0; i < 3; i++) {
     destruct_queue(name[i], queue_array[i]);
@@ -87,14 +87,8 @@ int judge(mqd_t* queue_array, int N) {
   int status;
   for (long i = 0; i < N; i++)
     wait(&status);
-  // msgsnd(queue_id, &buf, sizeof(int), 0);
-  
-  // if (msgrcv(queue_id, &buf, sizeof(int), N+1, 0) == -1) {
-  //   fprintf(stderr, "Failed to receive message from runner: %s\n", strerror(errno));
-  //   exit(FAILURE_STATUS);
-  // }
 
-  // printf("Judge: race is over!\n");
+  printf("Judge: race is over!\n");
   return 0;
 }
 
@@ -110,7 +104,6 @@ int runner(int runner_n, mqd_t* queue_array, int N) {
     perror("mq_send");
   }
 
-  printf("entering cycle\n");
   bool run = true;
   while (run) {
     if (mq_receive(queue_array[0], buffer, MSG_SIZE, &msg_prio) == -1) {
@@ -122,20 +115,17 @@ int runner(int runner_n, mqd_t* queue_array, int N) {
     if (atoi(buffer) == runner_n) {
       //printf("Runner %d: received message!\n", runner_n);
       if (runner_n < N) {
-          // Передать эстафету следующему бегуну
           printf("Runner %d: giving estapheta to the next runner\n", runner_n);
           snprintf(message, sizeof(message), "%d", runner_n + 1);
           mq_send(queue_array[0], message, strlen(message)+1, 2);
       } else {
-          // Последний бегун - финиш
-          printf("Runner %d: finished!\n", runner_n);
+          printf("Runner %d: i finished!\n", runner_n);
       }
       run = false;
     }
     else {
       //printf("Runner %d: Got message %s Buffer %s\n", runner_n, message, buffer);,
       snprintf(message, sizeof(message),"%s", buffer);
-      printf("message = %s\n", message);
       if (mq_send(queue_array[0], message, strlen(message)+1, 1)==-1)
         perror("send issue");
       //sleep(1);
@@ -146,7 +136,6 @@ int runner(int runner_n, mqd_t* queue_array, int N) {
     mq_close(queue_array[i]);
   }
 
-  printf("exit\n");
   exit(SUCCESS_STATUS);
 }
 
