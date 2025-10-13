@@ -2,7 +2,7 @@
 #include <sys/types.h>
 
 
-static size_t N = 7;
+static size_t N = 10;
 const char* name = "/test_queue";
 
 int main(void) {
@@ -14,7 +14,8 @@ int main(void) {
     .mq_curmsgs = 0
   };
 
-  mqd_t* queue_array = queues_for_runners(N, O_CREAT|O_RDWR, &attr);
+  mqd_t* queue_array = queues_for_runners(N, O_CREAT|O_RDWR, &attr); 
+  //| comunication with judge| comunication with runners |ready status|
   
   init_runners(queue_array, N);
   judge(queue_array, N);

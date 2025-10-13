@@ -20,10 +20,10 @@ struct message_st {
 #define SUCCESS_STATUS 1
 
 static const long MSG_MAX = 10;
-static const long MSG_SIZE = 1024;
+static const long MSG_SIZE = 8192;
 
-int  runner(int runner_n, mqd_t queue_id, int N);
-int  judge(mqd_t queue_id, int N);
+int  runner(int runner_n, mqd_t* queue_array, int N);
+int  judge(mqd_t* queue_array, int N);
 void init_runners(mqd_t* queue_array, int N);
 
 void   queues_for_runners_delete(size_t N, mqd_t* queue_array);
